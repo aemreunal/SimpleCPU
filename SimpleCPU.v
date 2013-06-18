@@ -40,15 +40,12 @@ reg [31:0] memA, memANext;
 reg [31:0] memB, memBNext;
 reg [31:0] instruction, instructionNext;
 
-
-
 reg gotCPIdata, gotCPIdataNext;
 
 wire [2:0] opcodeDE;
 wire immediateDE;
 wire [SIZE-1:0] addrADE;
 wire [SIZE-1:0] addrBDE;
-
 
 assign opcodeDE = data_fromRAM[31:29];
 assign immediateDE = data_fromRAM[28];
@@ -71,7 +68,6 @@ always@(posedge clk) begin
     memA <= #1 memANext;
     memB <= #1 memBNext;
     instruction <= #1 instructionNext;
-
     gotCPIdata <= #1 gotCPIdataNext;
 end
 
@@ -81,19 +77,17 @@ always@(*) begin
     memANext = memA;
     memBNext = memB;
     instructionNext = instruction;
-
     gotCPIdataNext = gotCPIdata;
     addr_toRAM = 0;
     data_toRAM = 0;
     wrEn = 0;
-    
+
     if(rst) begin
         stateNext = 0;
-        pCounterNext = 0;       
+        pCounterNext = 0;
         memANext = 0;
         memBNext = 0;
         instructionNext = 0;
-
         gotCPIdataNext = 0;
         wrEn = 0;
         addr_toRAM = 0;
@@ -106,6 +100,7 @@ always@(*) begin
                 addr_toRAM = pCounter;
                 stateNext = DE;
             end
+
             DE : begin
                 instructionNext = data_fromRAM;
                 addr_toRAM = addrADE;
@@ -131,6 +126,7 @@ always@(*) begin
                     end
                 endcase
             end
+
             FD1 : begin
                 memANext = data_fromRAM;
                 if(immediate && ~(opcode == CPI)) begin
@@ -151,23 +147,22 @@ always@(*) begin
                     end
                 endcase
             end
+
             FD2 : begin
                 memBNext = data_fromRAM;
                 stateNext = EX;
                 case(opcode)
                     CPI : begin
-
                         if(~immediate && ~gotCPIdata) begin
                             instructionNext = {instruction[31:14], 4'b0000, data_fromRAM[SIZE-1:0]};
                             addr_toRAM = data_fromRAM[SIZE-1:0];
                             stateNext = FD2;
-
                             gotCPIdataNext = 1;
-
                         end
                     end
                 endcase
             end
+
             EX : begin
                 stateNext = WR_UP;
                 case(opcode)
@@ -197,7 +192,6 @@ always@(*) begin
                         memANext = memB;
                     end
                     CPI : begin
-
                         gotCPIdataNext = 0;
                         memANext = memB;
                     end
@@ -220,6 +214,7 @@ always@(*) begin
                     end
                 endcase
             end
+
             WR_UP : begin
                 pCounterNext = pCounter + 1;
                 wrEn = 1;
@@ -227,6 +222,7 @@ always@(*) begin
                 data_toRAM = memA;
                 stateNext = FI;
             end
+
         endcase
     end
 end
