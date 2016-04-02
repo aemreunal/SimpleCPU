@@ -1,0 +1,127 @@
+0: CPi 99 100
+1: ADD 99 100   // Put (last number addr.) at 99 for the main program
+2: CPi 98 101
+3: ADD 98 100   // Put (last number addr. + 1) at 98 for the chooser
+4: CPi 97 101   // Put current address at 97 for the main program
+
+// End control - begin
+5: CP 96 97     // Beginning of end control, put current addr. to 96
+6: LT 96 99     // 1 if current addr. is not the last addr., 0 if it is.
+7: BZJ 21 96    // End of end control, jump to exit if at last addr.
+// End control - end
+
+// Odd control - begin
+8: CPI 95 97    // Get the number at **97, put it to 95
+9: NAND 95 83   // If **97 is odd, 95 will be 1
+10: NAND 95 95  // If **97 is odd, 95 will be 1
+11: BZJ 93 95   // Continute to curr. addr. incr. if odd, jump otherwise
+// Odd control - end
+
+12: ADDi 97 1   // Current addr. incrementer
+13: BZJi 14 0   // Jump to beginning of loop
+14: 05          // Loop begin addr.
+15: BZJi 92 0   // Jump to chooser, which is at addr. 31
+16: BZJi 91 0   // Jump to mover, which is at addr. 60
+
+20: BZJi 21 0   // Program end infinite loop
+21: 20
+
+
+
+31: CP 88 97    // Main prog. current addr. to 88
+32: ADDi 88 1   // Start choosing from (current + 1)
+33: CP 87 97    // Main prog. current addr. to 87 as the biggest chosen yet
+
+// End control - begin
+34: CP 96 88    // Beginning of end control, put current addr. to 96
+35: LT 96 98    // 1 if current addr. is not the last addr., 0 if it is.
+36: BZJ 90 96   // End of end control, jump to mover if at last addr.
+// End control - end
+
+// Odd control - begin
+37: CPI 95 88   // Get the number at **88, put it to 95
+38: NAND 95 83  // If **88 is odd, 95 will be 1
+39: NAND 95 95  // If **88 is odd, 95 will be 1
+40: BZJ 52 95   // Continute to curr. addr. incr. if odd, jump to choosing otherwise
+// Odd control - end
+
+// Orders numbers in increasing order
+// // Comparison begin
+// 41: ADDi 88 1   // Increment current addr. and return to 'end control begin'
+// 42: BZJi 49 0   // Jump back of chooser loop
+// // Choosing
+// 43: CPI 86 88   // Copy the number at curr. addr. to 86
+// 44: CPI 85 87   // Copy the biggest chosen yet to 85
+// 45: LT 86 85    // Compare curr. number with biggest chosen yet, 1 if current is smaller, 0 if bigger
+// 46: BZJ 50 86   // Copy the bigger number addr. or jump to curr. addr. incrementer
+// 47: CP 87 88    // Copy the bigger number addr.
+// 48: BZJi 50 0
+// 49: 34          // Begin addr. of chooser loop
+// 50: 41          // Chooser curr. addr. incrementer addr.
+// 51: 43 // Chooser begin addr.
+
+// Orders numbers in decreasing order
+// Comparison begin
+41: ADDi 88 1   // Increment current addr. and return to 'end control begin'
+42: BZJi 50 0   // Jump back of chooser loop
+// Choosing
+43: CPI 86 88   // Copy the number at curr. addr. to 86
+44: CPI 85 87   // Copy the biggest chosen yet to 85
+45: LT 86 85    // Compare curr. number with biggest chosen yet, 1 if current is smaller, 0 if bigger
+46: BZJ 53 86   // Jump to copy the bigger number addr. or continue back to curr. addr. incrementer
+47: BZJi 51 0   // Jump to curr. addr. incrementer
+48: CP 87 88    // Copy the bigger number addr.
+49: BZJi 51 0
+50: 34          // Begin addr. of chooser loop
+51: 41          // Chooser curr. addr. incrementer addr.
+52: 43          // Chooser begin addr.
+53: 48
+
+
+
+60: CPI 84 97   // Copy the current number to mover memory 1
+61: CPI 82 87   // Copy the biggest number to mover memory 2
+62: CPIi 97 82  // Copy the biggest number to current addr.
+63: CPIi 87 84  // copy the current number to biggest number addr.
+64: BZJi 89 0   // Return to main program
+
+
+
+83: 1 // For NAND
+// 82: // Mover memory 2 for biggest number
+// 84: // Mover memory 1 for curr. number
+// 85: // Chooser comparison memory 2 for biggest yet
+// 86: // Chooser comparison memory 1 for current number
+// 87: // Chooser biggest number addr.
+// 88: // Chooser current addr.
+89: 12 // Return addr. of mover
+90: 16 // Return addr. of chooser
+91: 60 // Addr. of mover
+92: 31 // Addr. of chooser
+93: 15 // Main prog. chooser & mover addr.
+94: 05 // Main loop begin addr.
+// 95: // Odd number control memory
+// 96: // End address control memory
+// 97: // Main program current address
+// 98: // End address for the chooser
+// 99: // End address of numbers for the main program
+
+
+
+// 100: 15 // N
+// 101: 3
+// 102: 8
+// 103: 3
+// 104: 5
+// 105: 10
+// 106: 2
+// 107: 16
+// 108: 34
+// 109: 42
+// 110: 123
+// 111: 233
+// 112: 65
+// 113: 654
+// 114: 94
+// 115: 4554
+// 116: 88888
